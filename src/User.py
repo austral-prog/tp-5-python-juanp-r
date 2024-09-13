@@ -1,29 +1,23 @@
+from typing import List
+
 class User:
-    def __init__(self, dni: int, name: str, number_of_checkouts: int = 0, number_of_checkins: int = 0) -> None:
-        self.__dni = dni
-        self.__name = name
-        self.__number_of_checkouts = number_of_checkouts
-        self.__number_of_checkins = number_of_checkins
+    def __init__(self, name: str, email: str) -> None:
+        self.name = name
+        self.email = email
+        self.borrowed_books: List[str] = []
 
-    def get_dni(self) -> int:
-        return self.__dni
+    def borrow_book(self, book: str) -> None:
+        """Add a book to the user's borrowed books list."""
+        self.borrowed_books.append(book)
 
-    def get_name(self) -> str:
-        return self.__name
+    def return_book(self, book: str) -> None:
+        """Remove a book from the user's borrowed books list."""
+        if book in self.borrowed_books:
+            self.borrowed_books.remove(book)
 
-    def get_number_of_checkouts(self) -> int:
-        return self.__number_of_checkouts
+    def has_borrowed(self, book: str) -> bool:
+        """Check if the user has borrowed a specific book."""
+        return book in self.borrowed_books
 
-    def get_number_of_checkins(self) -> int:
-        return self.__number_of_checkins
-
-    def increment_checkouts(self) -> None:
-        self.__number_of_checkouts += 1
-
-    def increment_checkins(self) -> None:
-        self.__number_of_checkins += 1
-
-
-
-
-
+    def __str__(self) -> str:
+        return f"User(name={self.name}, email={self.email})"
