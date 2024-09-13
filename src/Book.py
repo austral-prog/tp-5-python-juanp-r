@@ -1,4 +1,4 @@
-import typing
+from typing import Optional
 
 class Book:
     def __init__(self, isbn: str, title: str, author: str, available: bool = True, checkout_num: int = 0) -> None:
