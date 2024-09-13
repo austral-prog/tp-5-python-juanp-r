@@ -9,7 +9,9 @@ class Library:
         self.__checked_out_books = []
         self.__checked_in_books = []
 
-    # Getters
+
+    
+    
     def get_books(self):
         return self.__books
 
@@ -22,22 +24,50 @@ class Library:
     def get_checked_in_books(self):
         return self.__checked_in_books
 
-    # 1.1 Add Book
     def add_book(self, isbn, title, author):
-        pass
+        book = Book(isbn, title, author)
+        self.__books.append(book)
 
-    # 1.2 List All Books
     def list_all_books(self):
-        pass
+        for book in self.__books:
+            print(book)
 
-    # 2.1 Check out book
     def check_out_book(self, isbn, dni, due_date):
-        pass
+        book = next((b for b in self.__books if b.get_isbn() == isbn), None)
+        user = next((u for u in self.__users if u.get_dni() == dni), None)
 
-    # 2.2 Check in book
-    def check_in_book(self, isbn, dni, returned_date):
-        pass
+        if not book or not user:
+            return f"Unable to find the data for the values: ISBN {isbn} and DNI: {dni}"
+        if not book.is_available():
+            return f"Book {isbn} is not available"
 
-    # Utils
+        book.set_available(False)
+        book.increment_checkout_num()
+        user.increment_checkouts()
+        self.__checked_out_books.append([isbn, dni, due_date])
+
+        return f"User {dni} checked out book {isbn}"
+
+    def check_in_book(self, isbn, returned_date):
+        book = next((b for b in self.__books if b.get_isbn() == isbn), None)
+
+        if not book:
+            return f"Book {isbn} is not available"
+
+        if not any(b[0] == isbn for b in self.__checked_out_books):
+            return f"Book {isbn} is not available"
+
+        checkout_entry = next((b for b in self.__checked_out_books if b[0] == isbn), None)
+        if checkout_entry:
+            dni = checkout_entry[1]
+            user = next((u for u in self.__users if u.get_dni() == dni), None)
+            if user:
+                user.increment_checkins()
+            self.__checked_in_books.append([isbn, dni, returned_date])
+            self.__checked_out_books.remove(checkout_entry)
+            book.set_available(True)
+        return f"Book {isbn} has been checked in"
+
     def add_user(self, dni, name):
-        pass
+        user = User(dni, name)
+        self.__users.append(user)
